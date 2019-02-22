@@ -79,14 +79,6 @@ public class InMemoryStore
     }
 
     @Override
-    public void purgeEmailFromAllMailboxes() throws FolderException {
-        Collection<MailFolder> mailboxes = listMailboxes("*");
-        for (MailFolder folder : mailboxes) {
-            folder.deleteAllMessages();
-        }
-    }
-    
-    @Override
     public void renameMailbox(MailFolder existingFolder, String newName) throws FolderException {
         HierarchicalFolder toRename = (HierarchicalFolder) existingFolder;
         HierarchicalFolder parent = toRename.getParent();
