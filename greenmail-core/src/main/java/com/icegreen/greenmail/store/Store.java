@@ -75,7 +75,14 @@ public interface Store {
      * @throws FolderException If the mailbox couldn't be deleted.
      */
     void deleteMailbox(MailFolder folder) throws FolderException;
-
+    
+    /**
+     * Remove/purge all data from all mail stores (POP3/IMAP)
+     *
+     * @throws FolderException on error
+    */
+    public void purgeEmailFromAllMailboxes() throws FolderException;
+    
     /**
      * Renames the mailbox with the new name.
      *
