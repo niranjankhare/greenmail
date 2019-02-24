@@ -2,6 +2,7 @@ package com.icegreen.greenmail.configuration;
 
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Creates GreenMailConfiguration from properties.
@@ -28,6 +29,19 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
     public static final String GREENMAIL_AUTH_DISABLED = "greenmail.auth.disabled";
 
     /**
+     * Property for periodic purge interval. 0 is disabled.
+     * Used with GREENMAIL_PURGE_INTERVAL_UNIT
+     * 
+     */
+    public static final String GREENMAIL_PURGE_INTERVAL = "greenmail.purge.interval";
+    /**
+     * Property for periodic purge interval TimeUnit.
+     * Used with GREENMAIL_PURGE_INTERVAL
+     * 
+     */
+    public static final String GREENMAIL_PURGE_UNIT = "greenmail.purge.unit";
+    
+    /**
      * Builds a configuration object based on given properties.
      *
      * @param properties the properties.
@@ -46,6 +60,11 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         if (null != disabledAuthentication) {
             configuration.withDisabledAuthentication();
         }
+        String interval = properties.getProperty(GREENMAIL_PURGE_INTERVAL);
+        if (null != interval) {
+        	configurePurge(configuration, interval,
+        			properties.getProperty(GREENMAIL_PURGE_UNIT));
+        }
         return configuration;
     }
 
@@ -63,5 +82,27 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
                 throw new IllegalArgumentException("Expected format login:pwd[@domain] but got " + user
                         + " parsed to " + Arrays.toString(userParts));
         }
+    }
+    
+    protected void configurePurge (GreenMailConfiguration configuration, 
+    		String purgeInterval, String unit) {
+    	Long interval = 0L;
+    	try {
+    		interval = Long.parseLong(purgeInterval);
+    	} catch (Exception e) {
+    		throw new IllegalArgumentException("Expected PURGE_INTERVAL as number but got " + purgeInterval);
+    	}
+    	TimeUnit purgeUnit = null;
+    	for (TimeUnit t: TimeUnit.values()) {
+    		if (t.name().equalsIgnoreCase(unit)){
+    			purgeUnit = TimeUnit.valueOf(unit.toUpperCase());
+    			break;
+    		}
+    	}
+    	if (purgeUnit == null) {
+    		throw new IllegalArgumentException("Expected PURGE_UNIT one of: "
+    	+ TimeUnit.values()+" but got " + unit);
+    	}
+    	configuration.withPurgeScheduler(TimeUnit.SECONDS.convert(interval, purgeUnit));
     }
 }

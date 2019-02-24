@@ -40,6 +40,17 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
         assertTrue(config.isAuthenticationDisabled());
     }
 
+    @Test
+    public void testBuildWithPurgeSetting() {
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_PURGE_INTERVAL, "1");
+        props.setProperty(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_PURGE_UNIT, "hours");
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
+
+        assertNotNull(config);
+        assertTrue(config.isPurgeSchedulerEnabled());
+        assertEquals (Long.valueOf(3600L), config.getPurgeInterval());
+    }
+
     private Properties createPropertiesFor(String key, String value) {
         Properties props = new Properties();
         props.setProperty(key, value);

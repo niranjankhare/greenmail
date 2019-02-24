@@ -9,6 +9,8 @@ import java.util.List;
 public class GreenMailConfiguration {
     private final List<UserBean> usersToCreate = new ArrayList<>();
     private boolean disableAuthenticationCheck = false;
+    private boolean enablePurgeScheduler = false;
+    private Long purgeInterval = 0L;
 
     /**
      * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start.
@@ -47,6 +49,13 @@ public class GreenMailConfiguration {
     public List<UserBean> getUsersToCreate() {
         return usersToCreate;
     }
+    
+    /**
+     * @return purgeInterval for purgeJob
+     */
+    public Long getPurgeInterval() {
+        return purgeInterval;
+    }
 
     /**
      * Disables authentication.
@@ -68,4 +77,23 @@ public class GreenMailConfiguration {
     public boolean isAuthenticationDisabled() {
         return disableAuthenticationCheck;
     }
+
+    /**
+     * @return true, if purgeScheduler is enabled.
+     *
+     * @see GreenMailConfiguration#withPurgeScheduler()
+     */
+    public boolean isPurgeSchedulerEnabled() {
+		return enablePurgeScheduler;
+	}
+
+    /**
+     * Enables periodic purge at interval SECONDS.
+     * @return Modified configuration.
+     */
+    public GreenMailConfiguration withPurgeScheduler(Long interval) {
+		purgeInterval = interval;
+		enablePurgeScheduler = true;
+		return this;
+	}
 }

@@ -6,6 +6,8 @@ package com.icegreen.greenmail.util;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -301,7 +303,22 @@ public class GreenMail extends ConfiguredGreenMail {
             folder.deleteAllMessages();
         }
     }
-
+    
+    @Override
+    public void setupPurgeJob(Long interval) {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        Runnable periodicTask = new Runnable() {
+            public void run() {
+                try {
+                    log.debug("Purging mail from all mailboxes");
+                    purgeEmailFromAllMailboxes();
+                } catch (FolderException e) {
+                    log.info("Exception trying to purgeEmailFromAllMailboxes: {}", e);
+                }
+            }
+        };
+        executor.scheduleAtFixedRate(periodicTask, interval, interval, TimeUnit.SECONDS);
+    }
     /**
      * @deprecated As of 1.5 and to be removed in 1.6. No need to instantiate static helper class
      */

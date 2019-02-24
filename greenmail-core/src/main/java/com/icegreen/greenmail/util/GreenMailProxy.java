@@ -121,6 +121,10 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
         getGreenMail().purgeEmailFromAllMailboxes();
     }
 
+    @Override
+    public void setupPurgeJob(Long interval) {
+    	getGreenMail().setupPurgeJob(interval);
+    }
     /**
      * @return Greenmail instance provided by child class
      */

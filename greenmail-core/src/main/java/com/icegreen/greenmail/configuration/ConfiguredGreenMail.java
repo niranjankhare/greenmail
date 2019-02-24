@@ -23,6 +23,8 @@ public abstract class ConfiguredGreenMail implements GreenMailOperations {
                 setUser(user.getEmail(), user.getLogin(), user.getPassword());
             }
             getManagers().getUserManager().setAuthRequired(!config.isAuthenticationDisabled());
+            if (config.isPurgeSchedulerEnabled())
+            	setupPurgeJob(config.getPurgeInterval());            
         }
     }
 }

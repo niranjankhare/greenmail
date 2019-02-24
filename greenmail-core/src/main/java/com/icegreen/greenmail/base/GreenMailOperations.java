@@ -157,4 +157,10 @@ public interface GreenMailOperations {
      * @throws FolderException on error
     */
     void purgeEmailFromAllMailboxes() throws FolderException;
+    
+    /**
+     * Starts a periodic mailbox purge executor
+     * @param interval 
+    */
+    void setupPurgeJob(Long interval);
 }
